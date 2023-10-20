@@ -1,6 +1,6 @@
 # This example requires the 'message_content' intent.
 import os
-
+import sendgrid
 import discord
 
 class MyClient(discord.Client):
