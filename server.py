@@ -1,6 +1,7 @@
 # This example requires the 'message_content' intent.
 import os
-import sendgrid
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 import discord
 
 class MyClient(discord.Client):
@@ -15,10 +16,18 @@ class MyClient(discord.Client):
                 print(f'Channel update {after} is now in {after.category}')
                 await after.set_permissions(cocoa_press_staff, read_messages=True, send_messages=True)
                 await after.set_permissions(support_role, read_messages=False, send_messages=False)
-
-
             if after.category_id == 1164975645533675530:
                 print(f'Channel update {after} is now in {after.category}')
+                message = Mail(
+                    from_email=os.environ.get('FROM_EMAIL'),
+                    to_emails=os.environ.get('TO_EMAIL'),
+                    subject='New Discord Ticket Assigned To You',
+                    html_content='<strong>There is a new discord ticket assigned to you! Please go to discord</strong>')
+                try:
+                    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                    response = sg.send(message)
+                except Exception as e:
+                    print(e.message)
                 await after.set_permissions(support_role, read_messages=True, send_messages=True)
                 await after.set_permissions(cocoa_press_staff, read_messages=False, send_messages=False)
 
